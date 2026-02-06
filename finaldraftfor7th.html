@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Rose Day Anushkaa 🌹</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --primary: #ff4081; 
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-light: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('background.jpg') no-repeat center center/cover;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Dark Overlay */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        /* --- FLOATING PETALS BACKGROUND --- */
+        .petal-bg {
+            position: absolute;
+            background: rgba(255, 192, 203, 0.8);
+            border-radius: 150% 0 150% 0;
+            animation: fall linear infinite;
+            z-index: 2; 
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(20px); }
+        }
+
+        /* --- CENTRAL CONTENT --- */
+        .hero {
+            z-index: 3; 
+            text-align: center;
+            margin-bottom: 100px; 
+        }
+
+        h1 {
+            font-family: 'Sacramento', cursive;
+            font-size: 4.5rem;
+            color: var(--text-light);
+            margin: 0;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8); 
+            animation: fadeIn 1.5s ease;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #ffd7e6; 
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        /* --- ROSE IMAGE --- */
+        .rose-wrapper {
+            position: relative;
+            width: 220px; 
+            height: auto;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .rose-wrapper:hover { transform: scale(1.05); }
+
+        .rose-img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(255, 64, 129, 0.8));
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- GLASS DOCK --- */
+        .dock {
+            position: fixed;
+            bottom: 30px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .dock-btn {
+            background: rgba(255,255,255,0.95);
+            border: none;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .dock-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            background: var(--primary);
+            color: white;
+        }
+
+        .dock-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -45px;
+            background: rgba(255,255,255,0.9);
+            color: var(--primary);
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .dock-btn:hover::after { opacity: 1; }
+
+        /* --- MODALS --- */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 85%;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .modal.active .card { transform: scale(1); }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: #eee; border: none;
+            width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; font-weight: bold; color: #333; font-size: 18px;
+            transition: background 0.2s;
+        }
+        .close-btn:hover { background: #ddd; }
+
+        .card h2 { font-family: 'Sacramento'; color: var(--primary); font-size: 3rem; margin: 0 0 15px; }
+        .card p { font-size: 1.1rem; color: #444; line-height: 1.6; font-weight: 600; }
+        
+        .reason-box { 
+            font-size: 1.25rem; 
+            line-height: 1.5;
+            font-weight: 700; 
+            color: #d81b60; 
+            min-height: 120px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px;
+            transition: all 0.3s; /* Smooth transition for text changes */
+        }
+        
+        .next-btn { 
+            background: var(--primary); color: white; border: none; 
+            padding: 12px 25px; border-radius: 25px; cursor: pointer; 
+            margin-top: 15px; font-weight: bold; font-size: 1rem; 
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3); 
+            transition: transform 0.2s;
+        }
+        .next-btn:hover { transform: scale(1.05); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 3.5rem; } 
+            .subtitle { font-size: 1.1rem; }
+            .rose-wrapper { width: 180px; }
+            .card { padding: 30px; width: 90%; }
+            .card h2 { font-size: 2.5rem; }
+            .reason-box { font-size: 1.1rem; min-height: 100px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <audio id="music" loop>
+        <source src="perfect.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="petal-container"></div>
+
+    <div class="hero">
+        <div class="subtitle">For My Dearest</div>
+        <h1>Anushkaa</h1>
+        
+        <div class="rose-wrapper" onclick="togglePlay()">
+            <img src="rose.png" alt="Rose" class="rose-img">
+        </div>
+        
+        <div class="subtitle" style="margin-top: 10px; opacity: 0.9;">Happy Rose Day 🌹</div>
+    </div>
+
+    <div class="dock">
+        <button class="dock-btn" data-label="Play Song" onclick="togglePlay()" id="musicBtn">🎵</button>
+        <button class="dock-btn" data-label="Read Letter" onclick="openModal('letterModal')">💌</button>
+        <button class="dock-btn" data-label="Why You?" onclick="openModal('reasonsModal')">💖</button>
+    </div>
+
+    <div class="modal" id="letterModal">
+        <div class="card">
+            <button class="close-btn" onclick="closeModal('letterModal')">×</button>
+            <h2>A small letter to you</h2>
+            <p>
+                My dearest Anushkaa,<br><br>
+                Happy Rose Day. I know we are miles apart today, and I can’t just reach out and hand you a flower like I want to. But every time I look at the wallpaper on my screen, this picture of us, the distance feels a little less heavy. It’s my daily reminder that no matter how many miles are between us, you are always right here, anchored in my heart.                <br><br>
+                I’m counting down the moments until I can give you a rose in person, but until then, I’m sending this one with all my heart.                <br><br>
+                <b>I love you!!❤️</b>
+            </p>
+        </div>
+    </div>
+
+    <div class="modal" id="reasonsModal">
+        <div class="card">
+            <button class="close-btn" onclick="closeModal('reasonsModal')">×</button>
+            <h2>Why I Love You</h2>
+            <div class="reason-box" id="reasonText">Tap 'Next' to see why... ❤️</div>
+            <button class="next-btn" id="nextBtn" onclick="nextReason()">Next Reason ➡️</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. PETAL GENERATOR ---
+        const container = document.getElementById('petal-container');
+        
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal-bg');
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.width = Math.random() * 10 + 10 + 'px';
+            petal.style.height = petal.style.width;
+            petal.style.animationDuration = Math.random() * 5 + 8 + 's';
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            container.appendChild(petal);
+            setTimeout(() => petal.remove(), 13000);
+        }
+        setInterval(createPetal, 400);
+
+        // --- 2. MUSIC CONTROL ---
+        const audio = document.getElementById('music');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerHTML = "🎵";
+                document.querySelector('.rose-img').style.animationDuration = "3s";
+            } else {
+                audio.play();
+                musicBtn.innerHTML = "⏸";
+                document.querySelector('.rose-img').style.animationDuration = "1.2s";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- 3. MODAL LOGIC ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            
+            // RESET LOGIC: If opening the reasons modal, reset it to the start
+            if (id === 'reasonsModal') {
+                reasonIndex = -1;
+                const reasonText = document.getElementById('reasonText');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                reasonText.innerText = "Tap 'Next' to see why... ❤️";
+                reasonText.style.opacity = 1;
+                reasonText.style.fontSize = "1.25rem"; // Reset font size
+                
+                nextBtn.innerText = "Next Reason ➡️";
+                nextBtn.style.display = "inline-block"; // Show button again
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // --- 4. REASONS CAROUSEL (Non-Looping) ---
+        const reasons = [
+            "You are not just my love, but my very dear friend, one who hears the words I don't even need to say. 👯‍♀️",
+            "Looking at our photos makes me smile, they hold enough power to brighten my dark days.. ✨",
+            "You support me, your belief in me gives me a lot of motivation. Your voice is my favorite sound. ",
+            "You are the calm in my chaos, the melody in my noise, you are simply Perfect. 🎶",
+            "You are a very great girlfriend Anushkaa, the only flower I ever need. ❤️"
+        ];
+        
+        let reasonIndex = -1; 
+        const reasonText = document.getElementById('reasonText');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function nextReason() {
+            reasonIndex++; // Move to next
+
+            // If we are still inside the list
+            if (reasonIndex < reasons.length) {
+                // Fade effect
+                reasonText.style.opacity = 0;
+                setTimeout(() => {
+                    reasonText.innerText = reasons[reasonIndex];
+                    reasonText.style.opacity = 1;
+                }, 200);
+
+                // If this is the LAST item, change the button text
+                if (reasonIndex === reasons.length - 1) {
+                    nextBtn.innerText = "One last thing... ❤️";
+                }
+            } else {
+                // We are at the end! Show finale.
+                reasonText.style.opacity = 0;
+                setTimeout(() => {
+                    reasonText.innerHTML = "<b>Distance means nothing<br>when I have you. ❤️</b>";
+                    reasonText.style.fontSize = "1.8rem"; // Make it big
+                    reasonText.style.opacity = 1;
+                }, 200);
+                
+                // Hide the button so it stops
+                nextBtn.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
